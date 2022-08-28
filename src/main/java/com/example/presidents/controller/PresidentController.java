@@ -1,12 +1,12 @@
 package com.example.presidents.controller;
 
-import com.example.presidents.model.entity.President;
-import com.example.presidents.repository.PresidentsRepository;
+import com.example.presidents.model.dto.PresidentDto;
 import com.example.presidents.service.president.PresidentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("presidents")
@@ -16,15 +16,39 @@ public class PresidentController {
     private final PresidentService presidentService;
 
     @GetMapping("all")
-    public List<President> getAll() {
+    public List<PresidentDto> getAll() {
         return presidentService.getAllPresidents();
     }
 
     @PostMapping("save")
-    public President save(@RequestBody President president) {
-        return presidentService.savePresident(president);
+    public PresidentDto save(@RequestBody PresidentDto presidentDto) {
+        return presidentService.savePresident(presidentDto);
     }
 
+    @PutMapping("update")
+    public PresidentDto update(@RequestBody PresidentDto presidentDto) {
+        return presidentService.updatePresident(presidentDto);
+    }
+
+    @PatchMapping("update")
+    public PresidentDto updatePartial(@RequestBody PresidentDto presidentDto) {
+        return presidentService.updatePresidentPartial(presidentDto);
+    }
+
+    @DeleteMapping("delete/{id}")
+    public void deleteByIndex(@PathVariable Long id) {
+        presidentService.deletePresidentById(id);
+    }
+
+    @GetMapping("find/{name}")
+    public Set<PresidentDto> findPresidentByName(@PathVariable String name){
+        return presidentService.findPresidentByName(name);
+    }
+
+    @GetMapping("find-by-party/{party}")
+    public Set<PresidentDto> findPresidentsByPoliticalParty(@PathVariable String party){
+        return presidentService.findPresidentsByPoliticalParty(party);
+    }
 
    /* @GetMapping("all")
     public List<President> getAll() {
@@ -35,12 +59,7 @@ public class PresidentController {
 
 
 
-    @PutMapping("update/{id}")
-    public String update(@PathVariable("id") int index,
-                         @RequestBody President president) {
-        PresidentsRepository.presidentRepository.set(index, president);
-        return "updated!";
-    }
+
 
     @PutMapping("update")
     public String updateWithBodyOnly(@RequestBody President president) {
