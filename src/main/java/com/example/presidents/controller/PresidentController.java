@@ -2,6 +2,7 @@ package com.example.presidents.controller;
 
 import com.example.presidents.model.entity.President;
 import com.example.presidents.repository.PresidentsRepository;
+import com.example.presidents.service.president.PresidentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,11 +13,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PresidentController {
 
-    private final PresidentsRepository presidentRepository;
+    private final PresidentService presidentService;
 
     @GetMapping("all")
     public List<President> getAll() {
-        return presidentRepository.findAll();
+        return presidentService.getAllPresidents();
+    }
+
+    @PostMapping("save")
+    public President save(@RequestBody President president) {
+        return presidentService.savePresident(president);
     }
 
 
@@ -27,11 +33,7 @@ public class PresidentController {
     }
 
 
-    @PostMapping("save")
-    public President save(@RequestBody President president) {
-        PresidentsRepository.presidentRepository.add(president);
-        return president;
-    }
+
 
     @PutMapping("update/{id}")
     public String update(@PathVariable("id") int index,
