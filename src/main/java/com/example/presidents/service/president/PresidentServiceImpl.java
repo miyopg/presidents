@@ -1,5 +1,7 @@
 package com.example.presidents.service.president;
 
+import com.example.presidents.exception.exceptions.EntityNotFoundException;
+import com.example.presidents.exception.messages.PresidentsControllerExceptionMessages;
 import com.example.presidents.model.dto.PresidentDto;
 import com.example.presidents.model.entity.President;
 import com.example.presidents.model.mapper.PresidentMapper;
@@ -12,8 +14,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static java.util.Objects.nonNull;
 
 @Transactional
 @Service
@@ -32,7 +32,12 @@ public class PresidentServiceImpl implements PresidentService{
 
     @Override
     public Set<PresidentDto> findPresidentByName(String name) {
-        return presidentsRepository.findPresidentsByName(name).stream()
+        Set<President> presidents = presidentsRepository.findPresidentsByName(name);
+        if(presidents.isEmpty()) {
+            throw new EntityNotFoundException(PresidentsControllerExceptionMessages
+                    .ENTITY_FOR_PROVIDED_PARAMETER_NOT_EXISTS.getMessage());
+        }
+        return presidents.stream()
                 .map(PresidentMapper::toDto).collect(Collectors.toSet());
     }
 
@@ -79,7 +84,7 @@ public class PresidentServiceImpl implements PresidentService{
                 president.setPoliticalParty(presidentDto.getPoliticalParty());
             }
             return PresidentMapper.toDto(president);
-        }).orElseThrow(() -> new RuntimeException("Nie ma takiego prezydenta"));
+        }).orElseThrow(() -> new EntityNotFoundException(PresidentsControllerExceptionMessages.ENTITY_FOR_PROVIDED_ID_NOT_EXISTS.getMessage()));
 
     }
 
