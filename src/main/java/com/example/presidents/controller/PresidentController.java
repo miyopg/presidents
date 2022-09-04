@@ -25,6 +25,7 @@ public class PresidentController {
     }
 
     @PostMapping("save")
+    @ResponseStatus(HttpStatus.CREATED)
     public PresidentDto save(@Valid @RequestBody PresidentDto presidentDto) {
         return presidentService.savePresident(presidentDto);
     }
