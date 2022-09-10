@@ -7,6 +7,9 @@ import com.example.presidents.model.entity.President;
 import com.example.presidents.model.mapper.PresidentMapper;
 import com.example.presidents.repository.PresidentsRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -28,6 +31,12 @@ public class PresidentServiceImpl implements PresidentService{
         return presidentsRepository.findAll().stream()
                 .map(PresidentMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<PresidentDto> getAllPresidentsPaginated(Integer pageNumber, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return presidentsRepository.findAll(pageable).map(PresidentMapper::toDto);
     }
 
     @Override
@@ -54,15 +63,20 @@ public class PresidentServiceImpl implements PresidentService{
 
     @Override
     public PresidentDto updatePresident(PresidentDto presidentDto) {
-       return presidentsRepository.findById(presidentDto.getId()).map(president -> {
-            president.setName(presidentDto.getName());
-            president.setSurname(presidentDto.getSurname());
-            president.setPoliticalParty(presidentDto.getPoliticalParty());
-            president.setTermFrom(presidentDto.getTermFrom());
-            president.setTermTo(presidentDto.getTermTo());
-            return PresidentMapper.toDto(president);
-        }).get();
-
+        var president = presidentsRepository.findById(presidentDto.getId());
+        if(president.isPresent()) {
+            president.map(p -> {
+                p.setName(presidentDto.getName());
+                p.setSurname(presidentDto.getSurname());
+                p.setPoliticalParty(presidentDto.getPoliticalParty());
+                p.setTermFrom(presidentDto.getTermFrom());
+                p.setTermTo(presidentDto.getTermTo());
+                return PresidentMapper.toDto(p);
+            });
+        } else {
+            return PresidentMapper.toDto(presidentsRepository.save(PresidentMapper.toEntity(presidentDto)));
+        }
+        return presidentDto;
     }
 
     @Override

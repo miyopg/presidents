@@ -1,6 +1,7 @@
 package com.example.presidents.service.president;
 
 import com.example.presidents.model.dto.PresidentDto;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Set;
@@ -8,6 +9,8 @@ import java.util.Set;
 public interface PresidentService {
 
     List<PresidentDto> getAllPresidents() ;
+
+    Page<PresidentDto> getAllPresidentsPaginated(Integer pageNumber, Integer pageSize);
 
     Set<PresidentDto> findPresidentByName(String name);
 
