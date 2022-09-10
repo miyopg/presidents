@@ -81,29 +81,32 @@
         </table>
     </div>
     <div th:if="${totalPages > 1}">
-        <div>
+        <div  class="row cols-sm-10">
+        <div class="col-sm-2">
             Number of Presidents: [[${totalPresidents}]]
         </div>
-        <div>
-            Pages:
-        </div>
-        <div>
+
+            <div class="col-sm-2">
+                <a th:if ="${currentPage > 1}" th:href="@{'/?pageNumber=' + ${currentPage - 1}}">Previous page</a>
+            </div>
+            <div class="col-sm-1">
+                Pages:
+            </div>
+        <div class="col-sm-1">
             <span th:each="i: ${#numbers.sequence(1, totalPages)}">
             <a th:href="@{'/?pageNumber=' + ${i}}">[[${i}]]</a>
             </span>
         </div>
 
-        <div>
-            <a th:if ="${currentPage > 1}" th:href="@{'/?pageNumber=' + ${currentPage - 1}}">Previous page</a>
-        </div>
-        <div>
+
+        <div class="col-sm-1">
             <a th:if ="${currentPage < totalPages}" th:href="@{'/?pageNumber=' + ${currentPage + 1}}">Next page</a>
         </div>
-        <div >
-            <a th:href="@{'/?pageNumber=' + ${totalPages} }">Last page</a>
+        <div class="col-sm-1">
+            <a th:if="${currentPage != totalPages}" th:href="@{'/?pageNumber=' + ${totalPages} }">Last page</a>
         </div>
 
-    </div>
+    </div></div>
 </div>
 </body>
 </html>
